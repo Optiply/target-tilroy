@@ -1,19 +1,15 @@
 [tool.poetry]
 name = "target-tilroy"
-version = "0.1.0"
-description = "`target-tilroy` is a Singer target for Tilroy, built with the Meltano SDK for Singer Targets."
+version = "0.1.1"
+description = "`target-tilroy` is a Singer target for Tilroy, built with the Hotglue target SDK."
 authors = ["Your Name <your.email@example.com>"]
-keywords = [
-    "ELT",
-    "Tilroy",
-]
-packages = [{include = "target_tilroy", from= "."}]
+keywords = ["ELT", "Tilroy"]
+packages = [{ include = "target_tilroy", from = "." }]
 
 [tool.poetry.dependencies]
 python = ">=3.7.1,<3.11"
-singer-sdk = "^0.9.0"
-target-hotglue = "^0.0.2"
-requests = "^2.28.0"
+target-hotglue = "^0.1.11"
+requests = "^2.31.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.0.0"
@@ -27,7 +23,7 @@ isort = "^5.10.1"
 
 [tool.isort]
 profile = "black"
-multi_line_output = 3 # Vertical Hanging Indent
+multi_line_output = 3       # Vertical Hanging Indent
 src_paths = "target_tilroy"
 
 [build-system]
@@ -36,4 +32,4 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 # CLI declaration
-target-tilroy = 'target_tilroy.target:TargetTilroy.cli'
+target-tilroy = 'target_tilroy.target:cli'

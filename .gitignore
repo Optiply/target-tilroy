@@ -136,3 +136,11 @@ dmypy.json
 .pyre/
 secrets/
 .vscode/
+# macOS metadata
+.DS_Store
+
+# Local test credentials
+test_config.json
+
+# Local Singer test data
+data.singer
