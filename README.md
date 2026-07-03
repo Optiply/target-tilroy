@@ -1,9 +1,8 @@
 # target-tilroy
 
-A [Singer](https://singer.io) target for Tilroy that loads data into Tilroy's Purchase API, built with the Meltano SDK for Singer Targets.
+A [Singer](https://singer.io) target for Tilroy that loads BuyOrders into Tilroy's Purchase API, built with the Hotglue target SDK.
 
 ## Installation
-
 
 ### Install from source
 
@@ -19,19 +18,21 @@ Create a `config.json` file in the `secrets` folder with your Tilroy API configu
 
 ```json
 {
-  "base_url": "https://api.tilroy.com",
-  "Tilroy-Api-Key": "your-api-key-here",
-  "warehouse_id": 500134,
+  "api_url": "https://api.tilroy.com",
+  "tilroy_api_key": "your-tilroy-api-key-here",
+  "x_api_key": "your-x-api-key-here",
+  "warehouse_id": 500134
 }
 ```
 
 ### Configuration Parameters
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `base_url` | string | No | Base URL for Tilroy API (default: https://api.tilroy.com) |
-| `Tilroy-Api-Key` | string | Yes | Your Tilroy API key |
-| `warehouse_id` | integer | Yes | Warehouse ID for purchase orders |
+| Parameter        | Type    | Required | Description                                               |
+| ---------------- | ------- | -------- | --------------------------------------------------------- |
+| `api_url`        | string  | No       | Base URL for Tilroy API (default: https://api.tilroy.com) |
+| `tilroy_api_key` | string  | Yes      | `Tilroy-Api-Key` header value                             |
+| `x_api_key`      | string  | Yes      | `x-api-key` header value                                  |
+| `warehouse_id`   | integer | Yes      | Warehouse number for purchase order lines                 |
 
 ## Usage
 
@@ -55,21 +56,22 @@ poetry run target-tilroy --config secrets/config.json --state state.json
 # Test with the provided sample data
 cat payloads/sample_purchase_orders.json | target-tilroy --config secrets/config.json
 ```
+
 ```bash
-# For Windows command 
+# For Windows command
 Get-Content payloads/data_fixed.singer | poetry run target-tilroy --config secrets/config.json
 
 ```
 
 ## Architecture
 
-The target follows a clean architecture pattern:
+The target uses the Hotglue target SDK so individual BuyOrder failures are written to target state instead of hard-failing the whole export.
 
-- **TilroyClient**: Base client class that handles authentication, base URL, and common API operations
-- **PurchaseOrderSink**: Sink class that defines the endpoint path and transformation logic
-- **TargetTilroy**: Main target class that orchestrates the sinks
+- **TilroySink**: Base Hotglue sink class that handles authentication and base URL configuration while keeping the Hotglue SDK's default request/error behavior.
+- **PurchaseOrderSink**: Sink class that defines the purchase order import endpoint and transformation logic.
+- **TargetTilroy**: Main `TargetHotglue` class that registers supported sinks.
 
-This structure allows for easy extension to support additional Tilroy API endpoints by creating new sink classes.
+The target keeps the Hotglue SDK default behavior for API failures: transient/server errors use the SDK retry/backoff handling, then failed BuyOrders are written to target state and processing continues with subsequent BuyOrders.
 
 ## Development
 

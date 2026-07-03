@@ -1,0 +1,6 @@
+{
+  "api_url": "https://api.tilroy.com",
+  "tilroy_api_key": "YOUR_TILROY_API_KEY",
+  "x_api_key": "YOUR_X_API_KEY",
+  "warehouse_id": 500134
+}
